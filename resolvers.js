@@ -1,5 +1,9 @@
+const { PubSub } = require("apollo-server");
+
 const Users = require("./models/Users");
 const Books = require("./models/Books");
+
+const pubsub = new PubSub();
 
 const resolvers = {
     Query: {
@@ -12,8 +16,9 @@ const resolvers = {
     Mutation: {
         user: async (a, { name }) => {
             const user = new Users({ name });
-            await user.save();
-            return user;
+            const newGuy = await user.save();
+            pubsub.publish("USER_CREATED", { newUser: newGuy });
+            return newGuy;
         },
 
         book: async (a, { title, author }) => {
@@ -22,6 +27,12 @@ const resolvers = {
                 .save()
                 .then((b) => b.populate("author").execPopulate());
             return bk;
+        },
+    },
+
+    Subscription: {
+        newUser: {
+            subscribe: () => pubsub.asyncIterator(["USER_CREATED"]),
         },
     },
 };

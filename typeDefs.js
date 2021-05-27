@@ -23,6 +23,10 @@ const typeDefs = gql`
         user(name: String): Users
         book(title: String, author: ID): Book
     }
+
+    type Subscription {
+        newUser: Users
+    }
 `;
 
 module.exports = typeDefs;
