@@ -12,7 +12,10 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true,
 });
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+});
 
 server.listen().then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);

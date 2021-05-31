@@ -5,6 +5,8 @@ const Books = require("./models/Books");
 
 const pubsub = new PubSub();
 
+const USER_CREATED = "USER-CREATED";
+
 const resolvers = {
     Query: {
         user: (_, { _id }) => Users.findById(_id),
@@ -17,7 +19,7 @@ const resolvers = {
         user: async (a, { name }) => {
             const user = new Users({ name });
             const newGuy = await user.save();
-            pubsub.publish("USER_CREATED", { newUser: newGuy });
+            pubsub.publish(USER_CREATED, { newUser: newGuy });
             return newGuy;
         },
 
@@ -32,7 +34,7 @@ const resolvers = {
 
     Subscription: {
         newUser: {
-            subscribe: () => pubsub.asyncIterator(["USER_CREATED"]),
+            subscribe: () => pubsub.asyncIterator([USER_CREATED]),
         },
     },
 };
